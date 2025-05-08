@@ -3,8 +3,8 @@ import matplotlib.pyplot as mpl
 import numpy as np
 import math
 
-l1 = loans.loans(40000, .075, 10, True, 12, 2025.75, 54, False)
-l2 = loans.loans(200000, .08, 10, True, 12, 2026.0, 51, False)
+l1 = loans.loans(40000, .075, 10, False, 12, 2025.75, 54, True)
+l2 = loans.loans(200000, .08, 10, False, 12, 2026.0, 51, True)
 
 l1.accrue_lifetime()
 l2.accrue_lifetime()

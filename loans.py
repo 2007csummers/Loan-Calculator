@@ -7,6 +7,8 @@ class loans:
     #                    int,    float, int,     bool,       int,        int,      int,    bool,        
     def __init__(self, principal, rate, term, compounding, frequency, start_year, defered, roll_in):
         self.principal = principal
+        self.cur_interest = 0
+        self.payment = 0
         self.rate = rate
         self.term = term
         self.compounding = compounding
@@ -16,52 +18,55 @@ class loans:
         self.defered = defered
         self.principal_ot = {start_year: self.principal}
         self.interest_ot = {start_year: 0}
-        self.payment = 0
+       
         
 
-    def accrue(self):
+    def accrue(self, paying, date, time_inc):
         if self.compounding:
             temp_interest = self.principal * (self.rate/self.frequency)
             self.principal += temp_interest
-            return temp_interest
+            self.interest_ot[date] = self.interest_ot[date- time_inc] + temp_interest
+            if paying:
+                self.principal -= self.payment
+            self.principal_ot[date] = self.principal
         else:
             temp_interest = self.principal * self.rate/self.frequency
-            return temp_interest
+            self.interest_ot[date] = self.interest_ot[date - time_inc] + temp_interest
+            self.cur_interest += temp_interest
+            if paying:
+                if self.payment > self.cur_interest:
+                    self.principal -= (self.payment - self.cur_interest)
+                    self.cur_interest = 0
+                else:
+                    self.cur_interest -= self.payment
+            self.principal_ot[date] = self.principal
+                
+        
     
 
     def  accrue_lifetime(self):
-        year_count = 1.0
-        year_accrue = 0
-
-        #Logic Required to accrue interest during the defering window of the loan
-        for i in range(int(((self.defered * self.frequency)/ 12) + (self.frequency * self.term))):
-            interval_accrue = self.accrue()
-            year_accrue = interval_accrue
-            
-            if i > int(self.defered * self.frequency / 12):
-
-                if self.payment == 0:
-                    if self.roll_in:
-                        self.principal += self.interest_ot[self.start_year + year_count - 1] + year_accrue
-                    if self.compounding:
-                        self.payment = self.comp_monthly_payment()
-                    else:
-                        self.payment = self.simp_monthly_payment()
-                if i == range(int(((self.defered * self.frequency)/ 12) + (self.frequency * self.term))):
-                    self.principal = 0
-                elif self.compounding:
-                    self.principal -= self.payment
-                else:
-                    self.principal = self.principal - self.payment + interval_accrue
-
-            if (i + 1) % self.frequency == 0:
-                self.interest_ot[self.start_year + year_count] = self.interest_ot[self.start_year + year_count -1] + year_accrue
-                self.principal_ot[self.start_year + year_count] = self.principal
-                year_count += 1
-                year_accrue = 0
+        time_inc = 1 / (self.frequency)
+        date = self.start_year
         
-        #self.principal = 0
-        #self.principal_ot[self.start_year + year_count - 1] = 0
+        for i in range(int(self.defered / (12 / self.frequency))):
+            date += time_inc
+            self.accrue(False, date, time_inc)
+
+        if self.compounding:
+            self.payment = self.comp_monthly_payment()
+        else:
+            if self.roll_in:
+                self.principal += self.cur_interest
+                self.cur_interest = 0
+            self.payment = self.simp_monthly_payment()
+    
+
+        for i in range(self.term * self.frequency):
+            date += time_inc
+            self.accrue(True, date, time_inc)
+
+            
+
 
 
 
@@ -71,7 +76,7 @@ class loans:
             
 
     def simp_monthly_payment(self):
-        return self.principal * ((1 + self.rate / self.frequency) ** (self.term * self.frequency)) / self.simp_bot(self.term * self.frequency - 1)
+        return self.principal * ((1 + self.rate / self.frequency) ** (self.term * self.frequency)) / self.simp_bot(self.term * self.frequency - 1) + (self.cur_interest / (self.term * self.frequency))
     
 
 

@@ -4,8 +4,9 @@ class loans:
     #Defered is the number of months over which you will not be making payments on the loan
     #Term is the term length in years. Begins after the deferement period is finished
 
-    #                    int,    float, int,     bool,       int,        int,      int,    bool,        
+    #                    int,    float, int,     bool,       int,        float,      int,    bool,        
     def __init__(self, principal, rate, term, compounding, frequency, start_year, defered, roll_in):
+        self.principal_init = principal
         self.principal = principal
         self.cur_interest = 0
         self.payment = 0

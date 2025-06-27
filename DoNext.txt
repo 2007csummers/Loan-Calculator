@@ -1,5 +1,0 @@
-think about how to calculate payments for non roll in simple interest loans.
-work on instructions
-work on views
-work on saving files
-work on loading files

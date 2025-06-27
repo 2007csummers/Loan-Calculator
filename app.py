@@ -10,6 +10,11 @@ import math
 
 import loans
 
+def on_close(win):
+    print("Closing window")
+    win.quit()
+    win.destroy()
+
 
 loans_list = []
 
@@ -50,9 +55,12 @@ def openf():
 
 
 def add_loan():
+
     global loans_list
     window = tk.Tk()
     window.title("Loan Creator")
+
+    window.protocol("WM_DELETE_WINDOW", lambda:on_close(window))
 
     #The Header of the Window 
     header = tk.Text(window, height=1, width=20)
@@ -188,6 +196,7 @@ def add_loan():
 
 
 def manage_loans():
+
     global loans_list
     remove_list = []
     def remove_loan(ind):
@@ -207,6 +216,7 @@ def manage_loans():
 
     window2 = tk.Tk()
     window2.title("Loan Manager")
+    window2.protocol("WM_DELETE_WINDOW", lambda:on_close(window2))
 
     #creates header of the page
     header = tk.Label(window2, text="Loan Manager")
@@ -216,8 +226,34 @@ def manage_loans():
     table = tk.Frame(window2)
     table.pack()
 
+    #Set up the table headers
+    h1 = tk.Label(table, text="Color")
+    h2 = tk.Label(table, text="Line Style")
+    h3 = tk.Label(table, text="Start Year")
+    h4 = tk.Label(table, text="Compounding")
+    h5 = tk.Label(table, text="Rate")
+    h6 = tk.Label(table, text="Term")
+    h7 = tk.Label(table, text="Frequency")
+    h8 = tk.Label(table, text="Start Year")
+    h9 = tk.Label(table, text="Defered")
+    h10 = tk.Label(table, text="Roll In")
+    h11 = tk.Label(table, text="Payment")
 
-    row_num = 0
+    h1.grid(row=0, column=0)
+    h2.grid(row=0, column=1)
+    h3.grid(row=0, column=2)
+    h4.grid(row=0, column=3)
+    h5.grid(row=0, column=4)
+    h6.grid(row=0, column=5)
+    h7.grid(row=0, column=6)
+    h8.grid(row=0, column=7)
+    h9.grid(row=0, column=8)
+    h10.grid(row=0, column=9)
+    h11.grid(row=0, column=10)
+
+
+    #Create a table row for each loan
+    row_num = 1
     buttons = []
     for loan in loans_list:
         
@@ -247,6 +283,7 @@ def manage_loans():
         l6 = tk.Label(table, text=loan.start_year)
         l7 = tk.Label(table, text=loan.defered)
         l8 = tk.Label(table, text=roll)
+        l9 = tk.Label(table, text=loan.payment)
 
         remove = tk.Button(table, text="Remove", command=lambda current_row=row_num: remove_loan(current_row))
         
@@ -260,7 +297,8 @@ def manage_loans():
         l6.grid(row=row_num, column=7)
         l7.grid(row=row_num, column=8)
         l8.grid(row=row_num, column=9)
-        remove.grid(row=row_num, column=10)
+        l9.grid(row=row_num, column=10)
+        remove.grid(row=row_num, column=11)
 
         buttons.append(remove)
         row_num += 1
@@ -272,8 +310,10 @@ def manage_loans():
 
 
 def instructions():
+
     window = tk.Tk()
     window.title("Instructions")
+    window.protocol("WM_DELETE_WINDOW", lambda:on_close(window))
 
     header = tk.Label(window, text="Instructions")
 
@@ -281,9 +321,11 @@ def instructions():
 
 
 def principals():
+
     global loans_list
     window = tk.Tk()
     window.title("Principals")
+    window.protocol("WM_DELETE_WINDOW", lambda:on_close(window))
 
     header = tk.Label(window, text="Principals Over Time")
     header.pack()
@@ -320,9 +362,11 @@ def principals():
 
 
 def interests():
+
     global loans_list
     window = tk.Tk()
     window.title("Interests")
+    window.protocol("WM_DELETE_WINDOW", lambda:on_close(window))
 
     header = tk.Label(window, text="Interests Over Time")
     header.pack()
@@ -363,6 +407,7 @@ def interests():
 #Create main window
 root = tk.Tk()
 root.title("Loan Planner")
+root.protocol("WM_DELETE_WINDOW", lambda:on_close(root))
 
 #Add menu bar to access other pages
 menubar = tk.Menu(root)

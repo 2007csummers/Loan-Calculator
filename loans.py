@@ -1,3 +1,4 @@
+import copy
 class loans:
 
     #Frequency is the number of times a year that a loan is compounded.
@@ -53,13 +54,16 @@ class loans:
             date += time_inc
             self.accrue(False, date, time_inc)
 
-        if self.compounding:
-            self.payment = self.comp_monthly_payment()
-        else:
-            if self.roll_in:
-                self.principal += self.cur_interest
-                self.cur_interest = 0
-            self.payment = self.simp_monthly_payment()
+        if self.payment == 0:
+            if self.compounding:
+                self.payment = self.comp_monthly_payment()
+            else:
+                if self.roll_in:
+                    self.principal += self.cur_interest
+                    self.cur_interest = 0
+                    self.payment = self.simp_monthly_payment()
+                else:
+                    self.payment = self.simp_monthly_payment_no_roll(self.simp_monthly_payment(), 1, 1, 0.2)
     
 
         for i in range(self.term * self.frequency):
@@ -79,6 +83,24 @@ class loans:
     def simp_monthly_payment(self):
         return self.principal * ((1 + self.rate / self.frequency) ** (self.term * self.frequency)) / self.simp_bot(self.term * self.frequency - 1) + (self.cur_interest / (self.term * self.frequency))
     
+
+    def simp_monthly_payment_no_roll(self, temp_payment, direction, multiplier, step):
+        copy_loan = copy.deepcopy(self)
+        copy_loan.payment = temp_payment * multiplier
+
+        time_inc = 1 / (self.frequency)
+        date = copy_loan.start_year
+        for i in range(copy_loan.term * copy_loan.frequency):
+            date += time_inc
+            copy_loan.accrue(True, date, time_inc)
+        
+        if abs(copy_loan.principal) < 100:
+            return temp_payment * multiplier
+        elif direction * copy_loan.principal > 0:
+            return self.simp_monthly_payment_no_roll(temp_payment, direction, multiplier + (direction * step), step)
+        else:
+            return self.simp_monthly_payment_no_roll(temp_payment, direction * -1, multiplier - (direction * step/2), step/2)
+            
 
 
     def simp_bot(self, iterations):

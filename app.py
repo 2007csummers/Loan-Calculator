@@ -272,7 +272,7 @@ def manage_loans():
         else:
             dash = "Dashed"
         
-        colors = ["Blue", "Green", "Red", "Cyan", "Magenta", "Yellow", "Black"]
+        colors = ["NAHH", "Blue", "Green", "Red", "Cyan", "Magenta", "Yellow", "Black"]
         color = tk.Label(table, text=colors[row_num % 7])
         dashed = tk.Label(table, text=dash)
         l1 = tk.Label(table, text=loan.start_year)
@@ -414,21 +414,16 @@ menubar = tk.Menu(root)
 
 #Define File menu
 filemenu = tk.Menu(menubar, tearoff=0)
-filemenu.add_command(label="New", command=nada)
+#filemenu.add_command(label="New", command=nada)
 filemenu.add_command(label="Open", command=openf)
-filemenu.add_command(label="Save", command=nada)
+#filemenu.add_command(label="Save", command=nada)
 filemenu.add_command(label="Save As", command=save_as)
-filemenu.add_command(label="Close", command=nada)
+#filemenu.add_command(label="Close", command=nada)
 
 #Define edit menu
 editmenu = tk.Menu(menubar, tearoff=0)
 editmenu.add_command(label="Add Loan", command=add_loan)
 editmenu.add_command(label="Manage Loans", command=manage_loans)
-
-#Define Help Menu
-helpmenu = tk.Menu(menubar, tearoff=0)
-helpmenu.add_command(label="Instructions", command=instructions)
-
 
 #Define View menu
 viewmenu = tk.Menu(menubar, tearoff=0)
@@ -438,7 +433,6 @@ viewmenu.add_command(label="Interests", command=interests)
 #add menus to menu bar as cascade elements
 menubar.add_cascade(label="File", menu=filemenu)
 menubar.add_cascade(label="Edit", menu=editmenu)
-menubar.add_cascade(label="Help", menu=helpmenu)
 menubar.add_cascade(label="View", menu=viewmenu)
 
 
